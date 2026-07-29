@@ -7,6 +7,10 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      console.log('Hello from HTML!');
+      document.getElementById('root').innerHTML = '<h1>Test from HTML</h1>';
+    </script>
     <script type="module" src="/src/routes/index.tsx"></script>
   </body>
 </html>
