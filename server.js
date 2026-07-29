@@ -8,7 +8,15 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Health check - respond to ANY request
+// Health check - MUST return "OK"
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// Serve static files
+app.use(express.static('dist'));
+
+// Catch-all route
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
 });
