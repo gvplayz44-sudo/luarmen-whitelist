@@ -17,6 +17,15 @@ app.get('*', (req, res) => {
 });
 
 // Start the server - KEEP IT RUNNING
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server running on port ${PORT}`);
+});
+
+// Keep the process alive
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, closing server...');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
