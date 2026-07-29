@@ -1,72 +1,12 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-console.log(`Current directory: ${__dirname}`);
-
-// Check if dist folder exists
-const distPath = path.join(__dirname, 'dist');
-if (fs.existsSync(distPath)) {
-  console.log(`✅ dist folder found at: ${distPath}`);
-} else {
-  console.log(`❌ dist folder NOT found at: ${distPath}`);
-  console.log(`Creating dist folder...`);
-  try {
-    fs.mkdirSync(distPath);
-    console.log(`✅ dist folder created`);
-  } catch (err) {
-    console.error(`❌ Failed to create dist folder:`, err);
-  }
-}
-
-// Serve static files from the dist directory
-app.use(express.static(distPath));
-
-// Health check endpoint for Railway
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
-
-// Catch-all route to serve index.html
-app.get('*', (req, res) => {
-  const indexPath = path.resolve(__dirname, 'dist', 'index.html');
-  console.log(`Serving index.html from: ${indexPath}`);
-  
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    console.log(`❌ index.html NOT found at: ${indexPath}`);
-    res.status(404).send(`
-      <h1>Index.html not found</h1>
-      <p>Dist path: ${distPath}</p>
-      <p>Index path: ${indexPath}</p>
-    `);
-  }
-});
-
-// Start the server
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`✅ Health check: /health`);
-  console.log(`✅ App URL: http://localhost:${PORT}`);
-});
-
-// Keep the process alive
-process.on('SIGTERM', () => {
-  console.log('Received SIGTERM, closing server gracefully...');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
-  });
-});
-
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-});
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Luarmen</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/routes/index.tsx"></script>
+  </body>
+</html>
